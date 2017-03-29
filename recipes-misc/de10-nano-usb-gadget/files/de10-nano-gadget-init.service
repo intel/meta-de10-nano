@@ -1,0 +1,10 @@
+[Unit]
+Description=Start usb mass storage gadget
+After=dev-mmcblk0p1.device
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/de10-nano-gadget-init.sh
+
+[Install]
+WantedBy=basic.target

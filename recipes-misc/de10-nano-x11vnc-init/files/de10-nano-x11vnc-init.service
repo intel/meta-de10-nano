@@ -1,0 +1,9 @@
+[Unit]
+Description=DE10-Nano X11VNC server
+Documentation=man:x11vnc
+
+[Service]
+ExecStart=/usr/bin/de10-nano-x11vnc-init.sh
+
+[Install]
+WantedBy=multi-user.target

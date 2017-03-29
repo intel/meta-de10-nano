@@ -1,0 +1,10 @@
+[Unit]
+Description=DE10-Nano Prep fftsw
+After=de10-nano-fpga-init.service
+
+[Service]
+
+ExecStart=/examples/fft/bin/setup_target_fft_env.sh
+
+[Install]
+WantedBy=multi-user.target

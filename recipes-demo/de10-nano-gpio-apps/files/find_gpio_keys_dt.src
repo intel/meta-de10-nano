@@ -1,0 +1,36 @@
+function find_gpio_keys_dt ()
+{
+    for NEXT in $(find -L /proc/device-tree -name "compatible" | sort);
+    do
+        cat ${NEXT} | grep -xz "gpio-keys" > /dev/null && {
+            KEYS_DIRNAME="$(dirname ${NEXT})";
+            KEYS_COMPATIBLE="$(cat ${KEYS_DIRNAME}/compatible)";
+            echo "${KEYS_DIRNAME}";
+            echo -e "\tcompatible = '${KEYS_COMPATIBLE}'";
+            for NEXT_KEY in $(find -L "${KEYS_DIRNAME}" -name "gpios" | sort);
+            do
+                NEXT_KEY_DIR="$(dirname ${NEXT_KEY})";
+                echo "${NEXT_KEY_DIR}";
+                KEYS_GPIOS="$(hexdump -v -e '"0x" 4/1 "%02x" " "' "${NEXT_KEY}")";
+                CONTROLLER_PHANDLE_HEX=$(echo ${KEYS_GPIOS} | cut -d ' ' -f 1);
+                GPIO_BIT_HEX=$(echo ${KEYS_GPIOS} | cut -d ' ' -f 2);
+                INVERTED_FLAG_HEX=$(echo ${KEYS_GPIOS} | cut -d ' ' -f 3);
+                printf "             gpios = ('%d', '%d', '%d') : ('%s', '%s', '%s')\n" "${CONTROLLER_PHANDLE_HEX}" "${GPIO_BIT_HEX}" "${INVERTED_FLAG_HEX}" "controller" "bit" "flag";
+                KEYS_CODE="$(hexdump -v -e '"0x" 4/1 "%02x"' "${NEXT_KEY_DIR}/linux,code")";
+                printf "              code = '%d'\n" "${KEYS_CODE}";
+                GPIO_CONTROLLER="unknown";
+                CONTROLLER_PHANDLE_DEC="$(printf "%d" "${CONTROLLER_PHANDLE_HEX}")";
+                for NEXT in $(find -L /proc/device-tree -name "phandle" | sort);
+                do
+                    PHANDLE_HEX="$(hexdump -v -e '"0x" 4/1 "%02x"' "${NEXT}")";
+                    PHANDLE_DEC="$(printf "%d" "${PHANDLE_HEX}")";
+                    [ "${PHANDLE_DEC}" -eq "${CONTROLLER_PHANDLE_DEC}" ] && {
+                        GPIO_CONTROLLER="$(dirname ${NEXT})"
+                    };
+                done;
+                printf "        controller = '%s'\n" "${GPIO_CONTROLLER}";
+            done
+        };
+    done
+}
+

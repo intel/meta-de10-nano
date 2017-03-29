@@ -1,0 +1,10 @@
+[Unit]
+Description=Start FPGA LEDs
+After=de10-nano-fpga-init.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/de10-nano-fpga-leds.sh
+
+[Install]
+WantedBy=basic.target

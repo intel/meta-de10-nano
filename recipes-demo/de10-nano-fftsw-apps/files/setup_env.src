@@ -1,0 +1,8 @@
+#
+# add cross compiler tools directory into PATH
+#
+export PATH=/data/builds/atlas/setup-scripts/build/tmp-angstrom_v2014_12-glibc/sysroots/x86_64-linux/usr/bin/arm-angstrom-linux-gnueabi:${PATH}
+export CC=arm-angstrom-linux-gnueabi-gcc
+export CXX=arm-angstrom-linux-gnueabi-g++
+export AR=arm-angstrom-linux-gnueabi-ar
+

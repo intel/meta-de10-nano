@@ -1,0 +1,9 @@
+[Unit]
+Description=Start FPGA init
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/de10-nano-fpga-init.sh
+
+[Install]
+WantedBy=basic.target

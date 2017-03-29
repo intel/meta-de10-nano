@@ -1,0 +1,34 @@
+function find_gpio_leds_dt ()
+{
+    for NEXT in $(find -L /proc/device-tree -name "compatible" | sort);
+    do
+        cat ${NEXT} | grep -xz "gpio-leds" > /dev/null && {
+            LEDS_DIRNAME="$(dirname ${NEXT})";
+            LEDS_COMPATIBLE="$(cat ${LEDS_DIRNAME}/compatible)";
+            echo "${LEDS_DIRNAME}";
+            echo -e "\tcompatible = '${LEDS_COMPATIBLE}'";
+            for NEXT_LED in $(find -L "${LEDS_DIRNAME}" -name "gpios" | sort);
+            do
+                NEXT_LED_DIR="$(dirname ${NEXT_LED})";
+                echo "${NEXT_LED_DIR}";
+                LEDS_GPIOS="$(hexdump -v -e '"0x" 4/1 "%02x" " "' "${NEXT_LED}")";
+                CONTROLLER_PHANDLE_HEX=$(echo ${LEDS_GPIOS} | cut -d ' ' -f 1);
+                GPIO_BIT_HEX=$(echo ${LEDS_GPIOS} | cut -d ' ' -f 2);
+                INVERTED_FLAG_HEX=$(echo ${LEDS_GPIOS} | cut -d ' ' -f 3);
+                printf "             gpios = ('%d', '%d', '%d') : ('%s', '%s', '%s')\n" "${CONTROLLER_PHANDLE_HEX}" "${GPIO_BIT_HEX}" "${INVERTED_FLAG_HEX}" "controller" "bit" "flag";
+                GPIO_CONTROLLER="unknown";
+                CONTROLLER_PHANDLE_DEC="$(printf "%d" "${CONTROLLER_PHANDLE_HEX}")";
+                for NEXT in $(find -L /proc/device-tree -name "phandle" | sort);
+                do
+                    PHANDLE_HEX="$(hexdump -v -e '"0x" 4/1 "%02x"' "${NEXT}")";
+                    PHANDLE_DEC="$(printf "%d" "${PHANDLE_HEX}")";
+                    [ "${PHANDLE_DEC}" -eq "${CONTROLLER_PHANDLE_DEC}" ] && {
+                        GPIO_CONTROLLER="$(dirname ${NEXT})"
+                    };
+                done;
+                printf "        controller = '%s'\n" "${GPIO_CONTROLLER}";
+            done
+        };
+    done
+}
+

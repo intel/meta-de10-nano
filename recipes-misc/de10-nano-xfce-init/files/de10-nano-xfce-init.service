@@ -1,0 +1,10 @@
+[Unit]
+Description=Start XFCE session
+After=de10-nano-fpga-init.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/startxfce4
+
+[Install]
+WantedBy=basic.target

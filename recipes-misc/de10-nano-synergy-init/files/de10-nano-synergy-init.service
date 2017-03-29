@@ -1,0 +1,12 @@
+[Unit]
+Description=Start synergy client
+After=de10-nano-xfce-init.service systemd-networkd-wait-online.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/synergyc --restart --daemon 192.168.7.5
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=basic.target

@@ -32,6 +32,10 @@ Now using your favorite editor, create a file .repo/local_manifests/de10-nano.xm
         <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.30"/>
 </manifest> 
 ```
+The above disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
+```
+sed -i '/meta-photography/d' .repo/manifests/conf/bblayers.conf
+```
 
 ### Step 3: Fetch the repositories provided in the manifest
 ```

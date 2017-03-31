@@ -38,6 +38,11 @@ The above also disables meta-photography, so we have to edit conf/bblayers.conf 
 ```
 sed -i '/meta-photography/d' .repo/manifests/conf/bblayers.conf
 ```
+We also need to add in the new meta-de10-nano layer to the bblayers.conf
+
+```
+sed -i '/meta-altera/a \ \ \$\{TOPDIR\}\/layers\/meta-de10-nano \\' .repo/manifests/conf/bblayers.conf
+```
 
 ### Step 3: Fetch the repositories provided in the manifest
 ```

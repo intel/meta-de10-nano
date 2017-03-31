@@ -83,19 +83,18 @@ de10-nano-image-de10-nano.tar.xz                                            STAR
 The SDCard image name in the above list is "Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg".  Please remember that prebuilt images can be found [here](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
 
 ### Programming the SDCard image
-These instructions only over Linux\*, for alternate instructions please go [here](https://software.intel.com/en-us/write-image-to-micro-sd-card).
+These instructions only cover Linux\*, for alternate instructions please go [here](https://software.intel.com/en-us/write-image-to-micro-sd-card).
 
-These instructions use the dd command, I suggest using EXTREME CAUTION as it is trivial to overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine.
+DD should be used with EXTREME CAUTION as it is very easy to accidentally overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine.
 
-The first step is to insert the SDCard using either a dedicated SDCard interface or a USB adapter into your machine.  I will leave it to you to discover which device this shows up as but it is ussually /dev/sdX or /dev/mmcblkX where X is the device number.  I use a dedicated SDCard interface which shows up as /dev/mmcblk0, for safety reasons these instructions will use /dev/mmcblkX as this should never be a real device.
+The first step is to insert the SDCard using either a dedicated SDCard interface or a USB adapter into your machine.  This  usually shows up as /dev/sdX or /dev/mmcblkX where X is the device number.  For safety reasons these instructions will use /dev/mmcblkX as this should never be a real device.
 
 It will take a few minutes to write the ~2GB image.
 ```
 cd deploy/glibc/images/de10-nano/
-sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmxblkX bs=1M && sync && sync
+sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmcblkX bs=1M && sync && sync
 ```
-
-After this is complete, plug the card into the kit and power on the board.
+Once this is complete, plug the SDCard into the board and power it on.
 
  ## Additional Resources
 * [Discover the Terasic DE10-Nano Kit](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano)

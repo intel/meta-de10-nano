@@ -29,7 +29,7 @@ Now using your favorite editor, create a file .repo/local_manifests/de10-nano.xm
         <remove-project name="openembedded/meta-linaro" />                      
                                                                                         <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
         <project remote="github"  name="kraj/meta-altera" path="layers/meta-altera" revision="cf7fc462cc6a5e82f2de76bb21e09675be7ae316"/>
-        <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.30"/>
+        <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.31"/>
 </manifest> 
 ```
 The above disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.

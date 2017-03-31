@@ -19,20 +19,22 @@ The default manifests do not include the meta-de10-layer.  We will add the layer
 ```
 mkdir .repo/local_manifests
 ```
-Now using your favorite editor, create a file .repo/local_manifests/de10-nano.xml and put the following in it:
+Now we create manifest to add the meta-de10-layer, the follwing will create .repo/local_manifests/de10-nano.xml.  This speficies a specific revision for meta-altera and meta-de10-nano.
 
 ```
+cat << EOF > .repo/local_manifests/de10-nano.xml
 <?xml version="1.0" encoding="UTF-8"?>                                          
 <manifest>                                                                      
         <remove-project name="kraj/meta-altera" />                              
         <remove-project name="koenkooi/meta-photography" />                     
         <remove-project name="openembedded/meta-linaro" />                      
-                                                                                        <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
+        <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
         <project remote="github"  name="kraj/meta-altera" path="layers/meta-altera" revision="cf7fc462cc6a5e82f2de76bb21e09675be7ae316"/>
         <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.31"/>
 </manifest> 
+EOF
 ```
-The above disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
+The above also disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
 ```
 sed -i '/meta-photography/d' .repo/manifests/conf/bblayers.conf
 ```

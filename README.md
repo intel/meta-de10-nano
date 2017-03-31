@@ -1,7 +1,7 @@
 # Layer to support the DE10-Nano board
 
 ## Objective
-This layer provides support for building a demonstration and development image of linux for the [Terasic DE10-Nano kit](https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&CategoryNo=205&No=1046&PartNo=8) development board.
+This layer provides support for building a demonstration and development image of linux for the [Terasic DE10-Nano kit](https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&CategoryNo=205&No=1046&PartNo=8) development board.  The FPGA project for the Terasic DE10-Nano Kit can be found at [DE10-Nano Hardware](https://github.com/01org/de10-nano-hardware)
 
 ## Build Intructions
 Please refer to [README.md](https://github.com/Angstrom-distribution/angstrom-manifest/blob/master/README.md) for any prerequisits, these instuctions assume prerequisits have been met.  Please also note the instructions for configuring proxies.
@@ -101,3 +101,4 @@ Once this is complete, plug the SDCard into the board and power it on.
 * [Terasic DE10-Nano Get Started Guide](https://software.intel.com/en-us/terasic-de10-nano-get-started-guide)
 * [Project: My First FPGA](https://software.intel.com/en-us/articles/my-first-fpga)
 * [Learn more about Intel® FPGAs](https://software.intel.com/en-us/iot/hardware/fpga/)
+* [DE10-Nano FPGA Hardware Project](https://github.com/01org/de10-nano-hardware)

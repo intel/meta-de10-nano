@@ -1,25 +1,37 @@
-# Layer to support the DE10-Nano board
+# Layer to Support the Terasic DE10-Nano\* Board
 
-## Objective
-This layer provides support for building a demonstration and development image of linux for the [Terasic DE10-Nano kit](https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&CategoryNo=205&No=1046&PartNo=8) development board.  The FPGA project for the Terasic DE10-Nano Kit can be found at [DE10-Nano Hardware](https://github.com/01org/de10-nano-hardware)
+## Overview
+Instructions to build the image for the Terasic DE10-Nano\* development board and then write that image to a microSD card.
 
-## Build Intructions
-Please refer to [README.md](https://github.com/Angstrom-distribution/angstrom-manifest/blob/master/README.md) for any prerequisits, these instuctions assume prerequisits have been met.  Please also note the instructions for configuring proxies.
+This layer provides support for building a demonstration and development image of Linux\* for the [Terasic DE10-Nano](https://www.terasic.com.tw/cgi-bin/page/archive.pl?Language=English&CategoryNo=205&No=1046&PartNo=8) kit's development board.
 
-### Step 1: Cloning the manifest
-We need to clone the manifest to get all of the recipes required for building
+## Build Instructions
+Please refer to [README.md](https://github.com/Angstrom-distribution/angstrom-manifest/blob/master/README.md) for any prerequisites. These instructions assume prerequisites have been met.  
+
+**Note**: See the instructions for configuring proxies.
+
+Steps to build the image:
+
+1. Clone the manifest.
+2. Add the meta-de10-nano layer.
+3. Fetch repositories.
+4. Build the image.
+
+
+### Step 1: Clone the Manifest
+Clone the manifest to get all required recipes for building the image.
 ```
 mkdir de10-nano-build
 cd de10-nano-build
 repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2016.12-yocto2.2 
 ```
-### Step 2: Add the meta-de10-nano layer
-The default manifests do not include the meta-de10-layer.  We will add the layer, and tidy up some issue encountered with errant layers.
+### Step 2: Add the meta-de10-nano Layer
+The default manifests do not include the meta-de10-layer. Therefore, we add the layer and resolve any issues encountered with errant layers.
 
 ```
 mkdir .repo/local_manifests
 ```
-Now we create manifest to add the meta-de10-layer, the follwing will create .repo/local_manifests/de10-nano.xml.  This speficies a specific revision for meta-altera and meta-de10-nano.
+Now we create the manifest to add the meta-de10-layer. The following will create .repo/local_manifests/de10-nano.xml. This specifies a specific revision for meta-altera and meta-de10-nano.
 
 ```
 cat << EOF > .repo/local_manifests/de10-nano.xml
@@ -43,21 +55,20 @@ We also need to add in the new meta-de10-nano layer to the bblayers.conf
 ```
 sed -i '/meta-altera/a \ \ \$\{TOPDIR\}\/layers\/meta-de10-nano \\' .repo/manifests/conf/bblayers.conf
 ```
-
-### Step 3: Fetch the repositories provided in the manifest
+### Step 3: Fetch the Repositories from the Manifest
 ```
 repo sync
 ```
 
-### Step 4: Build
-This will take a few hours. 
+### Step 4: Build the Image
+Estimated to complete: 2–3 hours.
 ```
 MACHINE=de10-nano . ./setup-environment
 bitbake de10-nano-image
 ```
 
-## What next?
-The result of this lengthy build is an SDCard image that can be burned to allow the Terasic DE10-Nano Kit to boot Linux\*.  The image provides access via serial port, a graphical interface, USB, and Ethernet.  As part of the build, the recipes populate an FPGA image as well as the associated devicetrees.  
+## After Building the Image
+The result of this lengthy build is an image that can be written to an SD card which will enable the Terasic DE10-Nano board to boot Linux\*. The image provides access via serial port, a graphical interface, USB, and Ethernet. As part of the build, the recipes populate an FPGA image as well as the associated device trees.  
 
 The build output is located in deploy/glibc/images/de10-nano/
 
@@ -80,21 +91,26 @@ de10-nano-image-de10-nano.tar.gz                                            STAR
 de10-nano-image-de10-nano.tar.xz                                            STARTUP.BMP.LICENSE
 
 ```
-The SDCard image name in the above list is "Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg".  Please remember that prebuilt images can be found [here](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
+The SD card image name in the above list is "Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg".  
 
-### Programming the SDCard image
+**Note**: prebuilt images can be found [here](https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
+
+### Write the Image to a MicroSD Card
 These instructions only cover Linux\*, for alternate instructions please go [here](https://software.intel.com/en-us/write-image-to-micro-sd-card).
 
-DD should be used with EXTREME CAUTION as it is very easy to accidentally overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine.
+**Caution**: These instructions use the dd command which should be used with EXTREME CAUTION. It is very easy to accidentally overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine. 
 
-The first step is to insert the SDCard using either a dedicated SDCard interface or a USB adapter into your machine.  This  usually shows up as /dev/sdX or /dev/mmcblkX where X is the device number.  For safety reasons these instructions will use /dev/mmcblkX as this should never be a real device.
+The first step is to insert the SD Card using either a dedicated SD Card interface or a USB adapter into your machine. Discover which device this shows up. Usually the device shows up as /dev/sdX or /dev/mmcblkX where X is the device number. As an example, our dedicated SD Card interface shows up as /dev/mmcblk0.
 
-It will take a few minutes to write the ~2GB image.
+**Note**: for safety reasons these instructions will use /dev/mmcblkX as this should never be a real device.
+
+It will take a few minutes to write the image (~2GB).
 ```
 cd deploy/glibc/images/de10-nano/
-sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmcblkX bs=1M && sync && sync
+sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmxblkX bs=1M && sync && sync
 ```
-Once this is complete, plug the SDCard into the board and power it on.
+
+After this completes, insert the microSD card into the DE10-Nano board and then power it on.
 
  ## Additional Resources
 * [Discover the Terasic DE10-Nano Kit](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano)

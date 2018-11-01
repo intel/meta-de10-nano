@@ -28,7 +28,6 @@ IMAGE_INSTALL += " \
 	ne10-dev \
 	qtbase \
 	bluez5 \
-	epiphany \
 	vim \
 	gedit \
 	curl \
@@ -37,12 +36,7 @@ IMAGE_INSTALL += " \
 	nodejs-npm \
 	mraa \
 	mraa-dev \
-	node-mraa \
-	python-mraa \
 	upm \
-	upm-dev \
-	node-upm \
-	python-upm \
 	python-multiprocessing \
 	python-compiler \
 	python-misc \
@@ -63,6 +57,6 @@ IMAGE_INSTALL += " \
 	de10-nano-synergy-init \
 	de10-nano-xfce-init \
 	"
-	
+
 export IMAGE_BASENAME = "de10-nano-image"
 

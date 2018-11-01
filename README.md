@@ -11,7 +11,7 @@ We need to clone the manifest to get all of the recipes required for building
 ```
 mkdir de10-nano-build
 cd de10-nano-build
-repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2016.12-yocto2.2 
+repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2018.06-sumo
 ```
 ### Step 2: Add the meta-de10-nano layer
 The default manifests do not include the meta-de10-layer.  We will add the layer, and tidy up some issue encountered with errant layers.
@@ -23,14 +23,12 @@ Now using your favorite editor, create a file .repo/local_manifests/de10-nano.xm
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>                                          
-<manifest>                                                                      
-        <remove-project name="kraj/meta-altera" />                              
-        <remove-project name="koenkooi/meta-photography" />                     
-        <remove-project name="openembedded/meta-linaro" />                      
-                                                                                        <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
-        <project remote="github"  name="kraj/meta-altera" path="layers/meta-altera" revision="cf7fc462cc6a5e82f2de76bb21e09675be7ae316"/>
-        <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.31"/>
-</manifest> 
+<manifest>
+  <remove-project name="kraj/meta-altera" />                              
+  <project remote="github" name="kraj/meta-altera" path="layers/meta-altera" revision="786bee6f01287fb3427aa57996cfdf07d356dfc4" branch="master"/>
+  <remove-project name="koenkooi/meta-photography" />                     
+  <project name="feddischson/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="658add32da3ea735b0b5cb0f07ef98abc36369e7"/>
+</manifest>
 ```
 The above disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
 ```
@@ -52,28 +50,9 @@ bitbake de10-nano-image
 ## What next?
 The result of this lengthy build is an SDCard image that can be burned to allow the Terasic DE10-Nano Kit to boot Linux\*.  The image provides access via serial port, a graphical interface, USB, and Ethernet.  As part of the build, the recipes populate an FPGA image as well as the associated devicetrees.  
 
-The build output is located in deploy/glibc/images/de10-nano/
+The build output is located in deploy/glibc/images/de10-nano/.
 
-```
-[de10-nano]$ ls
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.cpio           de10-nano.rbf                                                           u-boot-de10-nano.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.ext3           dump_adv7513_edid.bin                                                   u-boot-de10-nano.img-de10-nano
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.manifest       dump_adv7513_edid.srec                                                  u-boot-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg  dump_adv7513_regs.bin                                                   u-boot.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.tar.gz         dump_adv7513_regs.srec                                                  u-boot.img-de10-nano
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.tar.xz         extlinux.conf                                                           u-boot-with-spl.sfp
-de10_nano_hdmi_config.bin                                                   extlinux.conf-de10-nano                                                 u-boot-with-spl.sfp-de10-nano
-de10_nano_hdmi_config.srec                                                  extlinux.conf-de10-nano-r0                                              u-boot-with-spl.sfp-de10-nano-de10-nano
-de10-nano-image-Angstrom-v2016.12.socfpga-sdimg                             LICENSE.de10-nano.rbf                                                   u-boot-with-spl.sfp-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0
-de10-nano-image-de10-nano.cpio                                              Log.txt                                                                 zImage
-de10-nano-image-de10-nano.ext3                                              modules--4.1.33-ltsi+git0+b84195c056-r0.1-de10-nano-20170330172917.tgz  zImage--4.1.33-ltsi+git0+b84195c056-r0.1-de10-nano-20170330172917.bin
-de10-nano-image-de10-nano.manifest                                          modules-de10-nano.tgz                                                   zImage--4.1.33-ltsi+git0+b84195c056-r0.1-socfpga_cyclone5_de10_nano-20170330172917.dtb
-de10-nano-image-de10-nano.socfpga-sdimg                                     README_-_DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY.txt                      zImage-de10-nano.bin
-de10-nano-image-de10-nano.tar.gz                                            STARTUP.BMP                                                             zImage-socfpga_cyclone5_de10_nano.dtb
-de10-nano-image-de10-nano.tar.xz                                            STARTUP.BMP.LICENSE
-
-```
-The SDCard image name in the above list is "Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg".  Please remember that prebuilt images can be found [here](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
+The SDCard image name is "Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic".  Please remember that prebuilt images can be found [here](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
 
 ### Programming the SDCard image
 These instructions only over Linux\*, for alternate instructions please go [here](https://software.intel.com/en-us/write-image-to-micro-sd-card).
@@ -85,7 +64,7 @@ The first step is to insert the SDCard using either a dedicated SDCard interface
 It will take a few minutes to write the ~2GB image.
 ```
 cd deploy/glibc/images/de10-nano/
-sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmxblkX bs=1M && sync && sync
+sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic of=/dev/mmxblkX bs=1M && sync && sync
 ```
 
 After this is complete, plug the card into the kit and power on the board.

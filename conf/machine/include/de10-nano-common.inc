@@ -1,8 +1,8 @@
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-altera-ltsi"
-PREFERRED_VERSION_linux-altera-ltsi ?= "4.1%"
+PREFERRED_VERSION_linux-altera-ltsi ?= "4.9%"
 
 PREFERRED_PROVIDER_virtual/bootloader ?= "u-boot-socfpga"
-PREFERRED_VERSION_u-boot-socfpga = "v2017.03%"
+PREFERRED_VERSION_u-boot-socfpga = "v2018.03%"
 
 UBOOT_CONFIG ??= "de10-nano"
 UBOOT_CONFIG[de0-nano-soc] = "socfpga_de0_nano_soc_defconfig"
@@ -10,9 +10,7 @@ UBOOT_CONFIG[de10-nano] = "socfpga_de10_nano_defconfig"
 
 SPL_BINARY = "u-boot-with-spl.sfp"
 
-IMAGE_CLASSES += "sdcard_image-socfpga"
-
-IMAGE_FSTYPES = "cpio ext3 tar.gz socfpga-sdimg"
+IMAGE_FSTYPES = "cpio ext3 tar.gz wic"
 
 IMAGE_OVERHEAD_FACTOR = "3"
 
@@ -23,7 +21,7 @@ SOCFPGA_SDIMG_EXTRA_FILES = "de10-nano.rbf de0-nano.rbf LICENSE.de10-nano.rbf LI
 INHERIT += " rootfs_ipk "
 
 # This is to remove unmaintained packages which pose security/support issues
-BAD_RECOMMENDATIONS = " libavahi-core avahi-utils avahi-daemon avahi-autoipd libnss-mdns cpufrequtils fbset consolekit wireless-tools "
+BAD_RECOMMENDATIONS = " libnss-mdns cpufrequtils cpufreq-tweaks fbset consolekit wireless-tools "
 RDEPENDS_pulseaudio-module-console-kit_remove = "consolekit"
 
 DISTRO_FEATURES_remove = "opengl"                                               

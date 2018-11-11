@@ -70,6 +70,13 @@ bitbake de10-nano-image
 The result of this lengthy build is an image that can be written to an SD card which will enable the Terasic DE10-Nano board to boot Linux\*. The image provides access via serial port, a graphical interface, USB, and Ethernet. As part of the build, the recipes populate an FPGA image as well as the associated device trees.  
 
 The build output is located in deploy/glibc/images/de10-nano/.
+=======
+## What next?
+The result of this lengthy build is an SDCard image that can be burned to allow the Terasic DE10-Nano Kit to boot Linux\*.  The image provides access via serial port, a graphical interface, USB, and Ethernet.  As part of the build, the recipes populate an FPGA image as well as the associated devicetrees.  
+
+The build output is located in deploy/glibc/images/de10-nano/.
+
+The SDCard image name is "Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic".  
 
 **Caution**: These instructions use the dd command which should be used with EXTREME CAUTION. It is very easy to accidentally overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine. 
 

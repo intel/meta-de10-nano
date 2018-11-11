@@ -1,0 +1,638 @@
+From 1a71898dae2ffd5327f53fd6bc8e4dc5abac8caf Mon Sep 17 00:00:00 2001
+From: Christian Haettich <feddischson@gmail.com>
+Date: Fri, 2 Nov 2018 17:20:47 +0000
+Subject: [PATCH] Fixes setenv ->  env_set call
+
+---
+ examples/standalone/de10_nano_hdmi_config.c | 174 ++++++++++----------
+ 1 file changed, 87 insertions(+), 87 deletions(-)
+
+diff --git a/examples/standalone/de10_nano_hdmi_config.c b/examples/standalone/de10_nano_hdmi_config.c
+index a7dd2c1ccb..b928643af1 100644
+--- a/examples/standalone/de10_nano_hdmi_config.c
++++ b/examples/standalone/de10_nano_hdmi_config.c
+@@ -132,9 +132,9 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	app_startup(argv);
+ 
+ 	/* initialize pointers and status */
+-	setenv(HDMI_STATUS_ENV, "startup");
+-	setenv(HDMI_INFO_ENV, "none");
+-	setenv(HDMI_ERROR_ENV, "none");
++	env_set(HDMI_STATUS_ENV, "startup");
++	env_set(HDMI_INFO_ENV, "none");
++	env_set(HDMI_ERROR_ENV, "none");
+ 
+         pll_ptr = (uint32_t*)(LWH2F_BASE + PLL_RECNFG_BASE);
+ 	fbr_ptr = (uint32_t*)(LWH2F_BASE + FBR_BASE);
+@@ -151,7 +151,7 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	 * default I2C driver, we just read the first N registers starting
+ 	 * from ZERO and reaching up to the register we want
+ 	 */
+-	setenv(HDMI_STATUS_ENV, "read ADV7513 chip ID");
++	env_set(HDMI_STATUS_ENV, "read ADV7513 chip ID");
+ 	milestones |= 0x01 << 0;
+ 	result = i2c_read(
+ 			ADV7513_MAIN_ADDR,	// uint8_t chip
+@@ -164,17 +164,17 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(result != 0) {
+ 		print_str = "reading I2C";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(1);
+ 	}
+ 
+ 	/* verify the chip id for the ADV7513 */
+-	setenv(HDMI_STATUS_ENV, "verify ADV7513 chip ID");
++	env_set(HDMI_STATUS_ENV, "verify ADV7513 chip ID");
+ 	milestones |= 0x01 << 1;
+ 	if(
+ 		(adv7513_read_buffer[ADV7513_CHIP_ID_HI] !=
+@@ -184,17 +184,17 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 
+ 		print_str = "Bad Chip ID";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(2);
+ 	}
+ 
+ 	/* verify that we see a monitor attached to the HDMI connector */
+-	setenv(HDMI_STATUS_ENV, "verify monitor attached");
++	env_set(HDMI_STATUS_ENV, "verify monitor attached");
+ 	milestones |= 0x01 << 2;
+ 	monitor_connected = 1;
+ 	if((adv7513_read_buffer[ADV7513_HPD_MNSNS] & ADV7513_HPD_MNSNS_BITS) !=
+@@ -202,12 +202,12 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 
+ 		print_str = "No HDMI display detected";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		monitor_connected = 0;
+ 	}
+ 
+ 	/* force HPD true */
+-	setenv(HDMI_STATUS_ENV, "force HPD true");
++	env_set(HDMI_STATUS_ENV, "force HPD true");
+ 	milestones |= 0x01 << 3;
+ 	adv7513_write_val = ADV7513_HPD_CNTL_BITS;
+ 	result = i2c_write(
+@@ -221,17 +221,17 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(result != 0) {
+ 		print_str = "writing I2C";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(4);
+ 	}
+ 
+ 	/* power down the ADV7513 */
+-	setenv(HDMI_STATUS_ENV, "power down ADV7513");
++	env_set(HDMI_STATUS_ENV, "power down ADV7513");
+ 	milestones |= 0x01 << 4;
+ 	adv7513_write_val = adv7513_read_buffer[ADV7513_PWR_DWN];
+ 	adv7513_write_val |= ADV7513_PWR_DWN_BIT;
+@@ -246,17 +246,17 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(result != 0) {
+ 		print_str = "writing I2C";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(4);
+ 	}
+ 
+ 	/* power up the ADV7513 */
+-	setenv(HDMI_STATUS_ENV, "power up ADV7513");
++	env_set(HDMI_STATUS_ENV, "power up ADV7513");
+ 	milestones |= 0x01 << 5;
+ 	adv7513_write_val &= ~ADV7513_PWR_DWN_BIT;
+ 	result = i2c_write(
+@@ -270,11 +270,11 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(result != 0) {
+ 		print_str = "writing I2C";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(5);
+ 	}
+@@ -284,13 +284,13 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	and configure ourselves according to that.  Otherwise we apply a default
+ 	1024*728 configuration
+ 	*/
+-	setenv(HDMI_STATUS_ENV, "monitor present fork");
++	env_set(HDMI_STATUS_ENV, "monitor present fork");
+ 	milestones |= 0x01 << 6;
+ 	if(monitor_connected == 0)
+ 		goto post_EDID_evaluation;
+ 
+ 	/* wait for the EDID data to become ready */
+-	setenv(HDMI_STATUS_ENV, "wait EDID ready");
++	env_set(HDMI_STATUS_ENV, "wait EDID ready");
+ 	milestones |= 0x01 << 7;
+ 	for(i = 0 ; i < 1000 ; i++) {
+ 		result = i2c_read(
+@@ -304,11 +304,11 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 		if(result != 0) {
+ 			print_str = "reading I2C";
+ 			printf("%s%s\n", ERROR_STR, print_str);
+-			setenv(HDMI_ERROR_ENV, print_str);
++			env_set(HDMI_ERROR_ENV, print_str);
+ 			print_str = "HDMI_milestones";
+ 			snprintf_buffer_ptr = &snprintf_buffer[0];
+ 			uitoa(milestones, &snprintf_buffer_ptr);
+-			setenv(print_str, snprintf_buffer);
++			env_set(print_str, snprintf_buffer);
+ 			printf("%s = %s\n", print_str, snprintf_buffer);
+ 			return(6);
+ 		}
+@@ -321,12 +321,12 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(i >= 1000) {
+ 		print_str = "EDID timeout";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* read the EDID data */
+-	setenv(HDMI_STATUS_ENV, "read EDID data");
++	env_set(HDMI_STATUS_ENV, "read EDID data");
+ 	milestones |= 0x01 << 8;
+ 	result = i2c_read(
+ 			ADV7513_EDID_ADDR,	// uint8_t chip
+@@ -339,17 +339,17 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(result != 0) {
+ 		print_str = "reading I2C";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(8);
+ 	}
+ 
+ 	/* verify EDID block 0 checksum */
+-	setenv(HDMI_STATUS_ENV, "verify EDID block 0 checksum");
++	env_set(HDMI_STATUS_ENV, "verify EDID block 0 checksum");
+ 	milestones |= 0x01 << 9;
+ 	checksum = 0;
+ 	for(i = 0 ; i < 128 ; i++)
+@@ -358,24 +358,24 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(checksum != 0) {
+ 		print_str = "EDID block 0 checksum";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* verify block 0 header pattern */
+-	setenv(HDMI_STATUS_ENV, "verify block 0 header pattern");
++	env_set(HDMI_STATUS_ENV, "verify block 0 header pattern");
+ 	milestones |= 0x01 << 10;
+ 	for(i = 0 ; i < 8 ; i++) {
+ 		if(edid_header_pattern_array[i] != adv7513_edid_buffer[i]) {
+ 			print_str = "EDID header pattern";
+ 			printf("%s%s\n", WARN_STR, print_str);
+-			setenv(HDMI_ERROR_ENV, print_str);
++			env_set(HDMI_ERROR_ENV, print_str);
+ 			goto post_EDID_evaluation;
+ 		}
+ 	}
+ 
+ 	/* decode descriptor blocks */
+-	setenv(HDMI_STATUS_ENV, "decode EDID block 0");
++	env_set(HDMI_STATUS_ENV, "decode EDID block 0");
+ 	milestones |= 0x01 << 11;
+ 	bad_horizontal_active_pixels_value = 0;
+ 	bad_vertical_active_lines_value = 0;
+@@ -464,13 +464,13 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 		goto post_EDID_evaluation;
+ 
+ 	/* check for extension blocks */
+-	setenv(HDMI_STATUS_ENV, "check for extension blocks");
++	env_set(HDMI_STATUS_ENV, "check for extension blocks");
+ 	milestones |= 0x01 << 31;
+ 	if(adv7513_edid_buffer[126] == 0)
+ 		goto post_EDID_evaluation;
+ 
+ 	/* verify extension block checksum */
+-	setenv(HDMI_STATUS_ENV, "verify extension block checksum");
++	env_set(HDMI_STATUS_ENV, "verify extension block checksum");
+ 	milestones |= 0x01 << 30;
+ 	checksum = 0;
+ 	for(i = 0 ; i < 128 ; i++)
+@@ -479,32 +479,32 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	if(checksum != 0) {
+ 		print_str = "extension block 1 checksum";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* verify extension tag */
+-	setenv(HDMI_STATUS_ENV, "verify extension tag");
++	env_set(HDMI_STATUS_ENV, "verify extension tag");
+ 	milestones |= 0x01 << 29;
+ 	if(adv7513_edid_buffer[128] != 0x02) {
+ 		print_str = "extension tag";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* verify revision number */
+-	setenv(HDMI_STATUS_ENV, "verify revision number");
++	env_set(HDMI_STATUS_ENV, "verify revision number");
+ 	milestones |= 0x01 << 28;
+ 	if(adv7513_edid_buffer[129] != 0x03) {
+ 		print_str = "extension revision number";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* check for DTDs in extension block */
+-	setenv(HDMI_STATUS_ENV, "check for DTDs in extension block");
++	env_set(HDMI_STATUS_ENV, "check for DTDs in extension block");
+ 	milestones |= 0x01 << 27;
+ 	dtd_offset = adv7513_edid_buffer[130];
+ 	dtd_count = adv7513_edid_buffer[131] & 0x0F;
+@@ -514,12 +514,12 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ 	  ) {
+ 		print_str = "No DTDs present in extension block";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		goto post_EDID_evaluation;
+ 	}
+ 
+ 	/* decode descriptor blocks */
+-	setenv(HDMI_STATUS_ENV, "decode EDID block 1");
++	env_set(HDMI_STATUS_ENV, "decode EDID block 1");
+ 	milestones |= 0x01 << 26;
+ 	for(i = 0 ; i < dtd_count ; i++) {
+ 		descriptor_base = &adv7513_edid_buffer[128];
+@@ -605,12 +605,12 @@ int de10_nano_hdmi_config(int argc, char * const argv[]) {
+ post_EDID_evaluation:
+ 
+ 	/* if no valid timing is found, then set 1024x768 default */
+-	setenv(HDMI_STATUS_ENV, "evaluate timing configuration");
++	env_set(HDMI_STATUS_ENV, "evaluate timing configuration");
+ 	milestones |= 0x01 << 12;
+ 	if(valid_timing_configuration_located == 0) {
+ 		print_str = "no valid timing found, setting 1024x768 default";
+ 		printf("%s%s\n", WARN_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 
+ 		pixel_clock_MHz = 65000000;
+ 		horizontal_active_pixels = 1024;
+@@ -647,17 +647,17 @@ post_EDID_evaluation:
+ 	if(shared_struct.desired_frequency == 0) {
+ 		print_str = "PLL calculation failure";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(11);
+ 	}
+ 
+ 	/* stop the FBR and wait for it to idle */
+-	setenv(HDMI_STATUS_ENV, "stop FBR");
++	env_set(HDMI_STATUS_ENV, "stop FBR");
+ 	milestones |= 0x01 << 13;
+ 	fbr_ptr[FBR_CNTL_REG] = 0x00000000;
+ 
+@@ -668,17 +668,17 @@ post_EDID_evaluation:
+ 	if(i >= 100000) {
+ 		print_str = "FBR stop timeout";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(12);
+ 	}
+ 
+ 	/* stop the CVO */
+-	setenv(HDMI_STATUS_ENV, "stop CVO");
++	env_set(HDMI_STATUS_ENV, "stop CVO");
+ 	milestones |= 0x01 << 14;
+ 	cvo_ptr[CVO_CNTL_REG] = 0x00000000;
+ 
+@@ -689,17 +689,17 @@ post_EDID_evaluation:
+ 	if(i >= 100000) {
+ 		print_str = "CVO stop timeout";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(13);
+ 	}
+ 
+ 	/* assert CVO reset */
+-	setenv(HDMI_STATUS_ENV, "assert CVO reset");
++	env_set(HDMI_STATUS_ENV, "assert CVO reset");
+ 	milestones |= 0x01 << 15;
+ 	cvo_reset_pio_ptr[0] = 0x00000001;
+ 
+@@ -748,7 +748,7 @@ post_EDID_evaluation:
+         pll_ptr[PLL_START_REG] = 0x01;
+ 
+ 	/* assert and release PLL reset, then wait for lock */
+-	setenv(HDMI_STATUS_ENV, "reset PLL");
++	env_set(HDMI_STATUS_ENV, "reset PLL");
+ 	milestones |= 0x01 << 16;
+ 	pll_reset_pio_ptr[0] = 0x00000001;
+ 	pll_reset_pio_ptr[0] = 0x00000000;
+@@ -760,17 +760,17 @@ post_EDID_evaluation:
+ 	if(i >= 100000) {
+ 		print_str = "PLL lock timeout";
+ 		printf("%s%s\n", ERROR_STR, print_str);
+-		setenv(HDMI_ERROR_ENV, print_str);
++		env_set(HDMI_ERROR_ENV, print_str);
+ 		print_str = "HDMI_milestones";
+ 		snprintf_buffer_ptr = &snprintf_buffer[0];
+ 		uitoa(milestones, &snprintf_buffer_ptr);
+-		setenv(print_str, snprintf_buffer);
++		env_set(print_str, snprintf_buffer);
+ 		printf("%s = %s\n", print_str, snprintf_buffer);
+ 		return(14);
+ 	}
+ 
+ 	/* release CVO reset */
+-	setenv(HDMI_STATUS_ENV, "release CVO reset");
++	env_set(HDMI_STATUS_ENV, "release CVO reset");
+ 	milestones |= 0x01 << 17;
+ 	cvo_reset_pio_ptr[0] = 0x00000000;
+ 
+@@ -817,7 +817,7 @@ post_EDID_evaluation:
+ 	cvo_ptr[CVO_M_VALID_REG]		= 1;
+ 
+ 	/* configure the ADV7513 */
+-	setenv(HDMI_STATUS_ENV, "configure ADV7513");
++	env_set(HDMI_STATUS_ENV, "configure ADV7513");
+ 	milestones |= 0x01 << 18;
+ 	for(i = 0 ; i < (int)(sizeof(init_config_array) / sizeof(init_config))
+ 			; i++) {
+@@ -833,111 +833,111 @@ post_EDID_evaluation:
+ 		if(result != 0) {
+ 			print_str = "writing I2C";
+ 			printf("%s%s\n", ERROR_STR, print_str);
+-			setenv(HDMI_ERROR_ENV, print_str);
++			env_set(HDMI_ERROR_ENV, print_str);
+ 			print_str = "HDMI_milestones";
+ 			snprintf_buffer_ptr = &snprintf_buffer[0];
+ 			uitoa(milestones, &snprintf_buffer_ptr);
+-			setenv(print_str, snprintf_buffer);
++			env_set(print_str, snprintf_buffer);
+ 			printf("%s = %s\n", print_str, snprintf_buffer);
+ 			return(15);
+ 		}
+ 	}
+ 
+ 	/* report configuration details to u-boot environment */
+-	setenv(HDMI_STATUS_ENV, "report configuration");
++	env_set(HDMI_STATUS_ENV, "report configuration");
+ 	milestones |= 0x01 << 19;
+ 
+ 	print_str = "HDMI_vld_tmng_fnd";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(valid_timing_configuration_located, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_h_active_pix";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(horizontal_active_pixels, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_h_blank_pix";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(horizontal_blanking_pixels, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_h_sync_off";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(horizontal_sync_offset, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_h_sync_width";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(horizontal_sync_width, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_v_active_lin";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(vertical_active_lines, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_v_blank_lin";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(vertical_blanking_lines, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_v_sync_off";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(vertical_sync_offset, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_v_sync_width";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(vertical_sync_width, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_pll_freq";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(shared_struct.desired_frequency, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_pll_m";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(shared_struct.m_value, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_pll_c";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(shared_struct.c_value, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_pll_k";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(shared_struct.k_value, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_stride";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(horizontal_active_pixels * 4, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+ 	print_str = "HDMI_milestones";
+ 	snprintf_buffer_ptr = &snprintf_buffer[0];
+ 	uitoa(milestones, &snprintf_buffer_ptr);
+-	setenv(print_str, snprintf_buffer);
++	env_set(print_str, snprintf_buffer);
+ 	printf("%s = %s\n", print_str, snprintf_buffer);
+ 
+-	setenv(HDMI_STATUS_ENV, "complete");
++	env_set(HDMI_STATUS_ENV, "complete");
+ 
+ 	/* paint the frame buffer */
+ /*
+@@ -976,56 +976,56 @@ post_EDID_evaluation:
+ 	}
+ 
+ 	print_str = "background painted";
+-	setenv(HDMI_INFO_ENV, print_str);
++	env_set(HDMI_INFO_ENV, print_str);
+ 
+ 	bmp_header_ptr = (struct bmp_image_header *)BMP_IMAGE_BASE;
+ 
+ 	if(bmp_header_ptr->bmp_signature != 0x4D42) {
+ 		print_str = "bad BMP signature";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(16);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_header_size != 124) {
+ 		print_str = "bad BMP header size";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(17);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_color_planes != 1) {
+ 		print_str = "bad BMP color planes";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(18);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_bits_per_pixel != 24) {
+ 		print_str = "bad BMP bits per pixel";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(19);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_compression_method != 0) {
+ 		print_str = "bad BMP compression method";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(20);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_width != 640) {
+ 		print_str = "bad BMP image width";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(21);
+ 	}
+ 
+ 	if(bmp_header_ptr->bmp_height != 480) {
+ 		print_str = "bad BMP image height";
+ 		printf("%s%s\n", INFO_STR, print_str);
+-		setenv(HDMI_INFO_ENV, print_str);
++		env_set(HDMI_INFO_ENV, print_str);
+ 		return(22);
+ 	}
+ 
+@@ -1053,7 +1053,7 @@ post_EDID_evaluation:
+ 	}
+ 
+ 	print_str = "startup BMP painted";
+-	setenv(HDMI_INFO_ENV, print_str);
++	env_set(HDMI_INFO_ENV, print_str);
+ 	return (0);
+ }
+ 
+-- 
+2.18.0
+

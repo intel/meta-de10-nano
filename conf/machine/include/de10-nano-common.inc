@@ -12,11 +12,11 @@ SPL_BINARY = "u-boot-with-spl.sfp"
 
 IMAGE_FSTYPES = "cpio ext3 tar.gz wic"
 
-IMAGE_OVERHEAD_FACTOR = "3"
+IMAGE_OVERHEAD_FACTOR = "1.3"
 
 require conf/machine/include/socfpga.inc
 
-SOCFPGA_SDIMG_EXTRA_FILES = "de10-nano.rbf de0-nano.rbf LICENSE.de10-nano.rbf LICENSE.de0-nano.rbf de10_nano_hdmi_config.bin dump_adv7513_edid.bin dump_adv7513_regs.bin STARTUP.BMP STARTUP.BMP.LICENSE"
+IMAGE_BOOT_FILES_append = "de10-nano.rbf LICENSE.de10-nano.rbf de10_nano_hdmi_config.bin dump_adv7513_edid.bin dump_adv7513_regs.bin STARTUP.BMP STARTUP.BMP.LICENSE boot.scr"
 
 INHERIT += " rootfs_ipk "
 

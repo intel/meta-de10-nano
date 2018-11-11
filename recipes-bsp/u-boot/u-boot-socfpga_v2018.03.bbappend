@@ -12,6 +12,7 @@ SRC_URI_append = "\
   file://STARTUP.BMP.LICENSE \
 "
 
+RRECOMMENDS_${PN} += "de10-u-boot-scr" 
 
 SRC_URI_append_de10-nano = "\
 	git://github.com/intel/de10-nano-hardware.git;destsuffix=hardware;name=hardware;branch=RELEASE_BUILDS;protocol=https \

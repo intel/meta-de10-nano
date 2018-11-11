@@ -36,14 +36,13 @@ Now we create the manifest to add the meta-de10-layer. The following will create
 ```
 cat << EOF > .repo/local_manifests/de10-nano.xml
 <?xml version="1.0" encoding="UTF-8"?>                                          
-<manifest>                                                                      
-        <remove-project name="kraj/meta-altera" />                              
-        <remove-project name="koenkooi/meta-photography" />                     
-        <remove-project name="openembedded/meta-linaro" />                      
-        <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
-        <project remote="github"  name="kraj/meta-altera" path="layers/meta-altera" revision="cf7fc462cc6a5e82f2de76bb21e09675be7ae316"/>
-        <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.31"/>
-</manifest> 
+<manifest>
+  <remove-project name="kraj/meta-altera" />                              
+  <project remote="github" name="kraj/meta-altera" path="layers/meta-altera" revision="786bee6f01287fb3427aa57996cfdf07d356dfc4" branch="master"/>
+  <remove-project name="koenkooi/meta-photography" />                     
+  <project name="feddischson/meta-de10-nano" path="layers/meta-de10-nano" remote="github" branch="sumo"/>
+</manifest>
+EOF
 ```
 The above also disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
 ```
@@ -70,7 +69,7 @@ bitbake de10-nano-image
 The result of this lengthy build is an image that can be written to an SD card which will enable the Terasic DE10-Nano board to boot Linux\*. The image provides access via serial port, a graphical interface, USB, and Ethernet. As part of the build, the recipes populate an FPGA image as well as the associated device trees.  
 
 The build output is located in deploy/glibc/images/de10-nano/.
-=======
+
 ## What next?
 The result of this lengthy build is an SDCard image that can be burned to allow the Terasic DE10-Nano Kit to boot Linux\*.  The image provides access via serial port, a graphical interface, USB, and Ethernet.  As part of the build, the recipes populate an FPGA image as well as the associated devicetrees.  
 

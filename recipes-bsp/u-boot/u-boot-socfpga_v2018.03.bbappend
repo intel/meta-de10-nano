@@ -6,8 +6,8 @@ SRCREV_FORMAT = "hardware"
 SRCREV_hardware = "d03450606b22a5f4f0d39da79fe169745ceffbec" 
 
 SRC_URI_append = "\
-  file://v2018.03/0005-Add-DE10-Nano-HDMI-configuration-and-debug-apps.patch \
-  file://v2018.03/0001-Fixes-setenv-env_set-call.patch \
+  file://v2018.03/0001-Add-DE10-Nano-HDMI-configuration-and-debug-apps.patch \
+  file://v2018.03/0002-Fixes-setenv-env_set-call.patch \
   file://STARTUP.BMP \
   file://STARTUP.BMP.LICENSE \
 "

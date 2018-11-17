@@ -9,12 +9,7 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 SRC_URI = "file://boot.cmd.in"
 
-DE10_KERNEL_BOOTCMD ?= "console=ttyS0,115200 earlyprintk rootfstype=ext4 root=${mmcroot} ro rootwait"
-DE10_BOOT_CMD     ?= "run mmcload;run mmcboot"
-DE10_BOOT_ETHER   ?= "11:22:33:44:55:66"
-DE10_BOOT_IP      ?= "192.168.1.2"
-DE10_BOOT_SERVER  ?= "192.168.1.1"
-DE10_BOOT_TARGETS ?= "mmc0"
+DE10_KERNEL_BOOTCMD ?= "console=ttyS0,115200 earlyprintk rootfstype=ext4 root=${mmcroot} ro rootwait mem=0x3F000000 memmap=16M$0x3F000000 "
 DE10_BOOT_SCRIPT  ?= "${WORKDIR}/boot.cmd.in"
 
 do_compile() {

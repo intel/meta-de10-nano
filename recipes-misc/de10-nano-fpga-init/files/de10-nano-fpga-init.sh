@@ -39,7 +39,7 @@ case "$BOARD_MODEL" in
 		DTBO_NAME="de0-nano.dtbo"
 	;;
 	"Terasic DE10-Nano")
-		DTBO_NAME="de10-nano.dtbo"
+		DTBO_NAME="de10-nano-fft.dtbo"
 	;;
 	*)
 		echo "NO BOARD MODEL MATCH"

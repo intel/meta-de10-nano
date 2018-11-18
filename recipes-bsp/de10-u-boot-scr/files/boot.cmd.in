@@ -43,23 +43,6 @@ setenv hdmi_dump_regs '
   icache flush;
   '
 
-setenv hdmi_fdt_mod '
-  fdt resize; 
-  fdt mknode /soc framebuffer@3F000000; 
-  setenv fdt_frag /soc/framebuffer@3F000000; 
-  fdt set ${fdt_frag} compatible "simple-framebuffer"; 
-  fdt set ${fdt_frag} reg <0x3F000000 8294400>; 
-  fdt set ${fdt_frag} format "x8r8g8b8"; 
-  fdt set ${fdt_frag} width <${HDMI_h_active_pix}>; 
-  fdt set ${fdt_frag} height <${HDMI_v_active_lin}>; 
-  fdt set ${fdt_frag} stride <${HDMI_stride}>; 
-  fdt set /soc stdout-path "display0"; 
-  fdt set /aliases display0 "/soc/framebuffer@3F000000";
-  sleep 2;
-'
-
-#  fdt set ${fdt_frag} status "okay";
-
 setenv fpga_cfg 'env exists fpga_files || setenv fpga_files ${board_name}.rbf; 
   for target in ${boot_targets}; 
   do run fpga_cfg_${target}; done'

@@ -91,6 +91,50 @@ sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic of=/
 
 After this completes, insert the microSD card into the DE10-Nano board and then power it on.
 
+
+## Minimal-Image
+In addition to the de10-nano-image, there exists a minimal image which is created via
+```
+bitbake de10-nano-image-minimal
+```
+This image holds just a basic system without apps and webserver.
+To further reduce the size, the image overhead factor could be reduced e.g. to 1.1:
+```
+echo 'IMAGE_OVERHEAD_FACTOR = "1.1"' >> conf/local.conf
+```
+
+## Extension and custom FPGA design
+
+The following example shows shows how to use a custom FPGA design for the DE10-board:
+```
+# File: conf/local.conf
+
+
+
+# The *.tgz file must hold the *.rbf, a device-tree-blob and licenses:
+DE10_NANO_HW_SRC           = "file:///path/to/my_custom_DE10_system.tgz"
+# MD5 of the *.tgz file:
+DE10_NANO_HW_MD5           = "25f46aa9ceb2bb4f43bf5240e05132e7"
+
+# Assuming, that all files are in the folder my_cystom_DE10_system, the following 
+# is used to define the paths within the tgz
+DE10_NANO_HW_DTBO_LIC_PATH = "my_custom_DE10_system/license_of_dtb.txt"
+DE10_NANO_HW_DTBO_PATH     = "my_custom_DE10_system/de10_sys.dtb"
+DE10_NANO_HW_RBF_LIC_PATH  = "my_custom_DE10_system/license_of_rbf.txt"
+DE10_NANO_HW_RBF_PATH      = "my_custom_DE10_system/de10_sys.rbf"
+
+# Checksum of the *.rbf file:
+DE10_NANO_HW_LIC_FILES_CHKSUM = "\
+	file://${WORKDIR}/my_custom_DE10_system/de10_sys.rbf;md5=f9f7b28f5ebafbdf17106fed80f43da2\
+"
+
+# In addition, a custom u-boot script can be used in order to adapt the initialization of the custom FPGA design.
+DE10_BOOT_SCRIPT = "/path/to/my_boot_script.in"
+
+```
+
+
+
  ## Additional Resources
 * [Discover the Terasic DE10-Nano Kit](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano)
 * [Terasic DE10-Nano Get Started Guide](https://software.intel.com/en-us/terasic-de10-nano-get-started-guide)

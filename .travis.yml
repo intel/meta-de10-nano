@@ -1,0 +1,55 @@
+language: c
+dist: xenial
+sudo: false
+os:
+  - linux
+compiler:
+  - gcc
+
+addons:
+  apt:
+    packages:
+      - git
+      - cmake-data
+      - cmake
+      - chrpath
+      - diffstat
+      - texinfo
+
+before_install:
+    - python3 -V
+    - python2 -V
+
+install:
+  - mkdir -p ~/bin
+  - export PATH=~/bin:$PATH
+  - curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+  - chmod a+x ~/bin/repo
+
+before_script:
+  - git config --global user.name "Travis"
+  - git config --global user.email "Continuous@integration.com"
+  - git config --global color.ui "yes"
+  - git config --global core.editor "vim"
+  - git config --global diff.tool "auto"
+  - git config --global merge.tool "auto"
+  - mkdir build
+  - cd build
+  - repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2018.06-sumo
+  - mkdir .repo/local_manifests
+  - echo '<?xml version="1.0" encoding="UTF-8"?>' >> .repo/local_manifests/de10-nano.xml
+  - echo '<manifest>' >> .repo/local_manifests/de10-nano.xml
+  - echo '<remove-project name="kraj/meta-altera" />' >> .repo/local_manifests/de10-nano.xml
+  - echo '<project remote="github" name="kraj/meta-altera" path="layers/meta-altera" revision="786bee6f01287fb3427aa57996cfdf07d356dfc4" branch="master"/>' >> .repo/local_manifests/de10-nano.xml
+  - echo '<remove-project name="koenkooi/meta-photography" />' >> .repo/local_manifests/de10-nano.xml
+  - echo '<project name="feddischson/meta-de10-nano" path="layers/meta-de10-nano" remote="github" branch="sumo"/>' >> .repo/local_manifests/de10-nano.xml
+  - echo '</manifest>' >> .repo/local_manifests/de10-nano.xml
+  - sed -i '/meta-photography/d' .repo/manifests/conf/bblayers.conf
+  - sed -i '/meta-altera/a \ \ \$\{TOPDIR\}\/layers\/meta-de10-nano \\' .repo/manifests/conf/bblayers.conf
+  - repo sync
+  - MACHINE=de10-nano . ./setup-environment
+
+script: 
+  - bitbake -n de10-nano-image
+  - bitbake -n meta-toolchain
+

@@ -5,7 +5,6 @@ PREFERRED_PROVIDER_virtual/bootloader ?= "u-boot-socfpga"
 PREFERRED_VERSION_u-boot-socfpga = "v2018.03%"
 
 UBOOT_CONFIG ??= "de10-nano"
-UBOOT_CONFIG[de0-nano-soc] = "socfpga_de0_nano_soc_defconfig"
 UBOOT_CONFIG[de10-nano] = "socfpga_de10_nano_defconfig"
 
 SPL_BINARY = "u-boot-with-spl.sfp"

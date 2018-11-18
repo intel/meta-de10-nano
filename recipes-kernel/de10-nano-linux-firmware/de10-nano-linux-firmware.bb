@@ -1,6 +1,6 @@
-SUMMARY = "Firmware for the DE0-Nano and DE10-Nano FPGAs"
+SUMMARY = "Firmware for the DE10-Nano FPGAs"
 
-LICENSE = "Firmware-de10-nano & Firmware-de0-nano & MIT"
+LICENSE = "Firmware-de10-nano & MIT"
 
 LIC_FILES_CHKSUM = "\
 	file://${WORKDIR}/de10-nano-fft/output_files/LICENSE.de10-nano-fft.rbf;md5=61ed20c72cdbf29b0335d0658105cab8 \
@@ -31,18 +31,18 @@ SRC_URI[md5sum] = "cb8b127e813a22d73f94bc543ddcbb76"
 #"
 
 do_install () {
-        cd ${WORKDIR}
+	cd ${WORKDIR}
 	install -d ${D}${base_libdir}/firmware
-	install -m 0644 LICENSE ${D}${base_libdir}/firmware/LICENSE.${MACHINE}-fft.dtbo
-        install -m 0644 devicetrees/${MACHINE}-fft.dtbo ${D}${base_libdir}/firmware
+	install -m 0644 LICENSE ${D}${base_libdir}/firmware/LICENSE.${MACHINE}.dtbo
+	install -m 0644 devicetrees/${MACHINE}-fft.dtbo ${D}${base_libdir}/firmware/${MACHINE}.dtbo
 
 }
 
 do_deploy () {
-        cd ${WORKDIR}
+	cd ${WORKDIR}
 	install -d ${DEPLOYDIR}
-	install -m 0644 ${MACHINE}-fft/output_files/LICENSE.${MACHINE}-fft.rbf ${DEPLOYDIR}
-	install -m 0644 ${MACHINE}-fft/output_files/${MACHINE}-fft.rbf ${DEPLOYDIR}
+	install -m 0644 ${MACHINE}-fft/output_files/LICENSE.${MACHINE}-fft.rbf ${DEPLOYDIR}/LICENSE.${MACHINE}.rbf
+	install -m 0644 ${MACHINE}-fft/output_files/${MACHINE}-fft.rbf ${DEPLOYDIR}/${MACHINE}.rbf
 }
 
 addtask deploy after do_install

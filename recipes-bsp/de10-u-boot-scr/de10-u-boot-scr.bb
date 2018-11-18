@@ -15,6 +15,7 @@ DE10_BOOT_SCRIPT  ?= "${WORKDIR}/boot.cmd.in"
 do_compile() {
     sed -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
         -e 's/@@KERNEL_BOOTCMD@@/${DE10_KERNEL_BOOTCMD}/' \
+        -e 's/@@MACHINE@@/${MACHINE}/' \
         ${DE10_BOOT_SCRIPT} > "${WORKDIR}/boot.cmd"
     mkimage -A arm -T script -C none -n "Boot script" -d "${WORKDIR}/boot.cmd" boot.scr
 }

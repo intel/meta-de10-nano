@@ -19,6 +19,7 @@ IMAGE_INSTALL += " \
 	python-compiler \
 	python-misc \
 	de10-nano-linux-firmware \
+	de10-nano-fpga-init \
 	"
 
 export IMAGE_BASENAME = "de10-nano-image-minimal"

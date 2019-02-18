@@ -1,6 +1,8 @@
 PR = "r0"
 FILESEXTRAPATHS_prepend := "${THISDIR}/config:"
 
+DE10_NANO_EXTRA_KERNEL_CONFIG ??= ""
+
 SRC_URI_append_de10-nano += " \
 			file://socfpga-4.9-ltsi/cfg/block.cfg \
 			file://socfpga-4.9-ltsi/cfg/configfs.cfg \
@@ -13,6 +15,7 @@ SRC_URI_append_de10-nano += " \
 			file://socfpga-4.9-ltsi/cfg/usb_vid.cfg \
 			file://socfpga-4.9-ltsi/cfg/bluetooth.cfg \
 			file://socfpga-4.9-ltsi/cfg/wireless.cfg \
+			${DE10_NANO_EXTRA_KERNEL_CONFIG} \
 			file://socfpga-4.9-ltsi/patches/0001-Add-DE10-Nano-devicetree.patch \
 			file://socfpga-4.9-ltsi/patches/0002-Enable-mmc-in-de10_nano-dts.patch \
 			"

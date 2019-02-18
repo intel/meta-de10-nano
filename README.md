@@ -131,6 +131,9 @@ DE10_NANO_HW_LIC_FILES_CHKSUM = "\
 # In addition, a custom u-boot script can be used in order to adapt the initialization of the custom FPGA design.
 DE10_BOOT_SCRIPT = "/path/to/my_boot_script.in"
 
+# If further kernel modules are required, add them to a file and pass it via
+DE10_NANO_EXTRA_KERNEL_CONFIG = "file://${TOPDIR}/conf/kernel_extra.cfg"
+
 ```
 
 

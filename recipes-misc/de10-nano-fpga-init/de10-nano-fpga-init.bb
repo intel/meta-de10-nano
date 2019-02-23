@@ -13,9 +13,11 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 PV = "1.0${PR}"
 
+DE10_FPGA_INIT_SH ??= "file://de10-nano-fpga-init.sh"
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI = "file://de10-nano-fpga-init.service \
-           file://de10-nano-fpga-init.sh \
+           ${DE10_FPGA_INIT_SH} \
           "
 
 do_install() {

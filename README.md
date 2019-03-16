@@ -138,7 +138,7 @@ DE10_NANO_EXTRA_KERNEL_CONFIG = "file://${TOPDIR}/conf/kernel_extra.cfg"
 # for example GPIOs via sys-interface.
 # For this, a copy of recipes-misc/de10-nano-fpga-init/files/de10-nano-fpga-init.sh can be placed in config.
 # The following entry considers it:
-DE10_NANO_FPGA_INIT_SH     = "file://${TOPDIR}/conf/de10-nano-fpga-init.sh"
+DE10_FPGA_INIT_SH     = "file://${TOPDIR}/conf/de10-nano-fpga-init.sh"
 
 
 ```

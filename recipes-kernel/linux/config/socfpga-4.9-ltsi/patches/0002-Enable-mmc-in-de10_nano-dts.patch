@@ -1,0 +1,24 @@
+From 7b51300822b530d50b858f05fbc684a2e975674b Mon Sep 17 00:00:00 2001
+From: Christian Haettich <feddischson@gmail.com>
+Date: Sat, 10 Nov 2018 22:04:33 +0000
+Subject: [PATCH] Enable mmc in de10_nano dts
+
+---
+ arch/arm/boot/dts/socfpga_cyclone5_de10_nano.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de10_nano.dts b/arch/arm/boot/dts/socfpga_cyclone5_de10_nano.dts
+index 80467c82c5b2..298469de0c2e 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_de10_nano.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_de10_nano.dts
+@@ -110,6 +110,7 @@
+ &mmc0 {
+ 	vmmc-supply = <&regulator_3_3v>;
+ 	vqmmc-supply = <&regulator_3_3v>;
++	status = "okay";
+ };
+ 
+ &uart0 {
+-- 
+2.18.0
+

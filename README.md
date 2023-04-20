@@ -32,7 +32,7 @@ Clone the manifest to get all required recipes for building the image.
 ```
 mkdir de10-nano-build
 cd de10-nano-build
-repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2016.12-yocto2.2 
+repo init -u git://github.com/Angstrom-distribution/angstrom-manifest -b angstrom-v2018.06-sumo
 ```
 ### Step 2: Add the meta-de10-nano Layer
 The default manifests do not include the meta-de10-layer. Therefore, we add the layer and resolve any issues encountered with errant layers.
@@ -45,14 +45,12 @@ Now we create the manifest to add the meta-de10-layer. The following will create
 ```
 cat << EOF > .repo/local_manifests/de10-nano.xml
 <?xml version="1.0" encoding="UTF-8"?>                                          
-<manifest>                                                                      
-        <remove-project name="kraj/meta-altera" />                              
-        <remove-project name="koenkooi/meta-photography" />                     
-        <remove-project name="openembedded/meta-linaro" />                      
-        <project name="openembedded/meta-linaro" path="layers/meta-linaro" remote="linaro" revision="992eaa0a1969c2056a5321c122eaa8cd808c1c82" upstream="master"/>
-        <project remote="github"  name="kraj/meta-altera" path="layers/meta-altera" revision="cf7fc462cc6a5e82f2de76bb21e09675be7ae316"/>
-        <project name="01org/meta-de10-nano" path="layers/meta-de10-nano" remote="github" revision="refs/tags/VERSION-2017.03.31"/>
-</manifest> 
+<manifest>
+  <remove-project name="kraj/meta-altera" />                              
+  <project remote="github" name="kraj/meta-altera" path="layers/meta-altera" revision="786bee6f01287fb3427aa57996cfdf07d356dfc4" branch="master"/>
+  <remove-project name="koenkooi/meta-photography" />                     
+  <project name="feddischson/meta-de10-nano" path="layers/meta-de10-nano" remote="github" branch="sumo"/>
+</manifest>
 EOF
 ```
 The above also disables meta-photography, so we have to edit conf/bblayers.conf to remove the reference to it.
@@ -79,33 +77,14 @@ bitbake de10-nano-image
 ## After Building the Image
 The result of this lengthy build is an image that can be written to an SD card which will enable the Terasic DE10-Nano board to boot Linux\*. The image provides access via serial port, a graphical interface, USB, and Ethernet. As part of the build, the recipes populate an FPGA image as well as the associated device trees.  
 
-The build output is located in deploy/glibc/images/de10-nano/
+The build output is located in deploy/glibc/images/de10-nano/.
 
-```
-[de10-nano]$ ls
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.cpio           de10-nano.rbf                                                           u-boot-de10-nano.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.ext3           dump_adv7513_edid.bin                                                   u-boot-de10-nano.img-de10-nano
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.manifest       dump_adv7513_edid.srec                                                  u-boot-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg  dump_adv7513_regs.bin                                                   u-boot.img
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.tar.gz         dump_adv7513_regs.srec                                                  u-boot.img-de10-nano
-Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.tar.xz         extlinux.conf                                                           u-boot-with-spl.sfp
-de10_nano_hdmi_config.bin                                                   extlinux.conf-de10-nano                                                 u-boot-with-spl.sfp-de10-nano
-de10_nano_hdmi_config.srec                                                  extlinux.conf-de10-nano-r0                                              u-boot-with-spl.sfp-de10-nano-de10-nano
-de10-nano-image-Angstrom-v2016.12.socfpga-sdimg                             LICENSE.de10-nano.rbf                                                   u-boot-with-spl.sfp-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0-de10-nano-v2017.03+gitAUTOINC+d03450606b-r0
-de10-nano-image-de10-nano.cpio                                              Log.txt                                                                 zImage
-de10-nano-image-de10-nano.ext3                                              modules--4.1.33-ltsi+git0+b84195c056-r0.1-de10-nano-20170330172917.tgz  zImage--4.1.33-ltsi+git0+b84195c056-r0.1-de10-nano-20170330172917.bin
-de10-nano-image-de10-nano.manifest                                          modules-de10-nano.tgz                                                   zImage--4.1.33-ltsi+git0+b84195c056-r0.1-socfpga_cyclone5_de10_nano-20170330172917.dtb
-de10-nano-image-de10-nano.socfpga-sdimg                                     README_-_DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY.txt                      zImage-de10-nano.bin
-de10-nano-image-de10-nano.tar.gz                                            STARTUP.BMP                                                             zImage-socfpga_cyclone5_de10_nano.dtb
-de10-nano-image-de10-nano.tar.xz                                            STARTUP.BMP.LICENSE
+## What next?
+The result of this lengthy build is an SDCard image that can be burned to allow the Terasic DE10-Nano Kit to boot Linux\*.  The image provides access via serial port, a graphical interface, USB, and Ethernet.  As part of the build, the recipes populate an FPGA image as well as the associated devicetrees.  
 
-```
-The SD card image name in the above list is "Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg".  
+The build output is located in deploy/glibc/images/de10-nano/.
 
-**Note**: prebuilt images can be found [here](https://software.intel.com/en-us/iot/hardware/fpga/de10-nano).
-
-### Write the Image to a MicroSD Card
-These instructions only cover Linux\*, for alternate instructions please go [here](https://software.intel.com/en-us/write-image-to-micro-sd-card).
+The SDCard image name is "Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic".  
 
 **Caution**: These instructions use the dd command which should be used with EXTREME CAUTION. It is very easy to accidentally overwrite the wrong device which can lead to data loss as well as hours spent rebuilding your machine. 
 
@@ -116,10 +95,64 @@ The first step is to insert the SD Card using either a dedicated SD Card interfa
 It will take a few minutes to write the image (~2GB).
 ```
 cd deploy/glibc/images/de10-nano/
-sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2016.12-de10-nano.rootfs.socfpga-sdimg of=/dev/mmxblkX bs=1M && sync && sync
+sudo dd if=Angstrom-de10-nano-image-glibc-ipk-v2018.06-de10-nano.rootfs.wic of=/dev/mmxblkX bs=1M && sync && sync
 ```
 
 After this completes, insert the microSD card into the DE10-Nano board and then power it on.
+
+
+## Minimal-Image
+In addition to the de10-nano-image, there exists a minimal image which is created via
+```
+bitbake de10-nano-image-minimal
+```
+This image holds just a basic system without apps and webserver.
+To further reduce the size, the image overhead factor could be reduced e.g. to 1.1:
+```
+echo 'IMAGE_OVERHEAD_FACTOR = "1.1"' >> conf/local.conf
+```
+
+## Extension and custom FPGA design
+
+The following example shows shows how to use a custom FPGA design for the DE10-board:
+```
+# File: conf/local.conf
+
+
+
+# The *.tgz file must hold the *.rbf, a device-tree-blob and licenses:
+DE10_NANO_HW_SRC           = "file:///path/to/my_custom_DE10_system.tgz"
+# MD5 of the *.tgz file:
+DE10_NANO_HW_MD5           = "25f46aa9ceb2bb4f43bf5240e05132e7"
+
+# Assuming, that all files are in the folder my_cystom_DE10_system, the following 
+# is used to define the paths within the tgz
+DE10_NANO_HW_DTBO_LIC_PATH = "my_custom_DE10_system/license_of_dtb.txt"
+DE10_NANO_HW_DTBO_PATH     = "my_custom_DE10_system/de10_sys.dtb"
+DE10_NANO_HW_RBF_LIC_PATH  = "my_custom_DE10_system/license_of_rbf.txt"
+DE10_NANO_HW_RBF_PATH      = "my_custom_DE10_system/de10_sys.rbf"
+
+# Checksum of the *.rbf file:
+DE10_NANO_HW_LIC_FILES_CHKSUM = "\
+	file://${WORKDIR}/my_custom_DE10_system/de10_sys.rbf;md5=f9f7b28f5ebafbdf17106fed80f43da2\
+"
+
+# In addition, a custom u-boot script can be used in order to adapt the initialization of the custom FPGA design.
+DE10_BOOT_SCRIPT = "/path/to/my_boot_script.in"
+
+# If further kernel modules are required, add them to a file and pass it via
+DE10_NANO_EXTRA_KERNEL_CONFIG = "file://${TOPDIR}/conf/kernel_extra.cfg"
+
+# In some cases, it is usedful to initialize something via shell script during bootup, 
+# for example GPIOs via sys-interface.
+# For this, a copy of recipes-misc/de10-nano-fpga-init/files/de10-nano-fpga-init.sh can be placed in config.
+# The following entry considers it:
+DE10_FPGA_INIT_SH     = "file://${TOPDIR}/conf/de10-nano-fpga-init.sh"
+
+
+```
+
+
 
  ## Additional Resources
 * [Discover the Terasic DE10-Nano Kit](https://signin.intel.com/logout?target=https://software.intel.com/en-us/iot/hardware/fpga/de10-nano)

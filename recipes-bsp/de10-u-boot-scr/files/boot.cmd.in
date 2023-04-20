@@ -1,0 +1,85 @@
+
+setenv boot_targets mmc0
+
+setenv fpga_files @@MACHINE@@.rbf
+
+setenv fdt_addr 0x02000000
+setenv bootimage @@KERNEL_IMAGETYPE@@
+setenv mmcroot /dev/mmcblk0p3
+setenv mmcload 'mmc rescan;
+  load mmc 0:1 ${loadaddr} ${bootimage};
+  load mmc 0:1 ${fdt_addr} ${fdtfile} 
+  fdt addr ${fdt_addr}; 
+  '
+
+setenv bootargs @@KERNEL_BOOTCMD@@
+setenv mmcboot bootz ${loadaddr} - ${fdt_addr}
+
+setenv hdmi_cfg '
+  i2c dev 2; 
+  load mmc 0:1 0x0c300000 STARTUP.BMP; 
+  icache flush;
+  load mmc 0:1 0x0c100000 de10_nano_hdmi_config.bin; 
+  go 0x0C100001; 
+  icache flush;
+  dcache flush;
+  if test "${HDMI_enable_dvi}" = "yes"; then
+    i2c mw 0x39 0xAF 0x04 0x01; 
+  fi;
+  '
+setenv hdmi_dump_edid '
+  i2c dev 2;
+  icache flush;
+  load mmc 0:1 0x0c100000 dump_adv7513_edid.bin;
+  go 0x0C100001;
+  icache flush;
+  '
+
+setenv hdmi_dump_regs '
+  i2c dev 2;
+  icache flush;
+  load mmc 0:1 0x0c100000 dump_adv7513_regs.bin;
+  go 0x0C100001;
+  icache flush;
+  '
+
+setenv fpga_cfg 'env exists fpga_files || setenv fpga_files ${board_name}.rbf; 
+  for target in ${boot_targets}; 
+  do run fpga_cfg_${target}; done'
+
+setenv fpga_cfg_mmc0 'setenv devnum 0;  
+  setenv devtype mmc;  
+  run scan_dev_for_boot_part_fpga'
+
+setenv scan_dev_for_boot_part_fpga '
+  part list ${devtype} ${devnum} -bootable devplist;
+  env exists devplist || setenv devplist 1; 
+  for distro_bootpart in ${devplist}; do 
+    if fstype ${devtype} ${devnum}:${distro_bootpart} bootfstype; then 
+      run scan_dev_for_boot_fpga; 
+    fi; 
+  done'
+
+setenv scan_dev_for_boot_fpga 'echo Scanning ${devtype} ${devnum}:${distro_bootpart}...; 
+  for prefix in ${boot_prefixes}; do 
+    run scan_dev_for_fpga; 
+  done '
+
+setenv scan_dev_for_fpga '
+  for file in ${fpga_files}; do 
+    if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${file}; then 
+      echo Found FPGA Configuration ${prefix}${file}; 
+      load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_r} ${prefix}${file}; 
+      fpga load 0 ${kernel_addr_r} ${filesize});
+      bridge enable;
+    fi; 
+  done'
+
+echo ==== Loading FPGA         ====
+run fpga_cfg
+echo ==== Initialize Display   ====
+run hdmi_cfg
+echo ==== Booting              ====
+run mmcload
+run mmcboot
+

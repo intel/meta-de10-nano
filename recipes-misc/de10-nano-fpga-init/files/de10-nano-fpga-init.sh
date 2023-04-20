@@ -35,9 +35,6 @@ fi
 
 DTBO_NAME=""
 case "$BOARD_MODEL" in
-	"Terasic DE-0(Atlas)")
-		DTBO_NAME="de0-nano.dtbo"
-	;;
 	"Terasic DE10-Nano")
 		DTBO_NAME="de10-nano.dtbo"
 	;;
